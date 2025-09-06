@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAX AI Website Manager</title>
+    <meta name="description" content="Create and manage beautiful websites using AI conversation">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .status-bar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 2rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: 1rem;
+            padding: 1rem;
+            min-height: 0;
+        }
+
+        .sidebar {
+            width: 340px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .chat-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 0;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .chat-header h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            min-height: 0;
+            max-height: calc(100vh - 300px);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease-in;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background: #e3f2fd;
+            margin-left: 2rem;
+            border-left: 4px solid #2196f3;
+        }
+
+        .message.ai {
+            background: #f5f5f5;
+            margin-right: 2rem;
+            border-left: 4px solid #4caf50;
+        }
+
+        .message.system {
+            background: #fff3e0;
+            font-style: italic;
+            border-left: 4px solid #ff9800;
+            font-size: 0.95rem;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .message ul {
+            margin: 0.5rem 0 0.5rem 1.5rem;
+        }
+
+        .message li {
+            margin-bottom: 0.25rem;
+        }
+
+        .command-output {
+            background: #263238;
+            color: #4caf50;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 0.5rem 0;
+            white-space: pre-wrap;
+            border-left: 4px solid #4caf50;
+            overflow-x: auto;
+        }
+
+        .error-output {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #f44336;
+            margin: 0.5rem 0;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+
+        .deployment-success {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            text-align: center;
+        }
+
+        .deployment-success a {
+            color: #2e7d32;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .deployment-success a:hover {
+            text-decoration: underline;
+        }
+
+        .chat-input {
+            padding: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            resize: vertical;
+            min-height: 50px;
+            max-height: 120px;
+            font-family: inherit;
+        }
+
+        #messageInput:focus {
+            border-color: #667eea;
+        }
+
+        #messageInput::placeholder {
+            color: #999;
+        }
+
+        .btn {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.secondary {
+            background: #fff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn.secondary:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn.small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .sites-section {
+            margin-bottom: 2rem;
+        }
+
+        .sites-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sites-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .site-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .site-item:hover {
+            background: #e9ecef;
+            transform: translateX(2px);
+        }
+
+        .site-item.active {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .site-item.error {
+            background: #ffebee;
+            border-color: #f44336;
+            opacity: 0.7;
+        }
+
+        .site-item .site-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.25rem;
+        }
+
+        .site-item .site-info {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .site-item .site-error {
+            font-size: 0.85rem;
+            color: #c62828;
+            font-style: italic;
+        }
+
+        .examples-section {
+            margin-bottom: 2rem;
+        }
+
+        .examples-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .example-command {
+            display: block;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .example-command:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+            color: #333;
+            transform: translateY(-1px);
+        }
+
+        .quick-actions {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .quick-actions h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-actions .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.online {
+            background: #4caf50;
+            box-shadow: 0 0 4px #4caf50;
+        }
+
+        .status-indicator.offline {
+            background: #f44336;
+        }
+
+        .ai-status {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #2196f3;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 0.5rem;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+                max-height: 300px;
+            }
+            
+            .chat-container {
+                order: 1;
+                min-height: 400px;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .message.user {
+                margin-left: 0.5rem;
+            }
+
+            .message.ai {
+                margin-right: 0.5rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 HAX AI Website Manager</h1>
+        <p>Create and manage beautiful websites using simple conversation</p>
+    </div>
+    
+    <div class="status-bar">
+        <span>
+            <span class="status-indicator online"></span>
+            System Ready
+        </span>
+        <span id="aiStatus">Loading...</span>
+    </div>
+    
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sites-section">
+                <h3>🌐 Your Websites</h3>
+                <div class="sites-list" id="sitesList">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        <div class="loading"></div><br>
+                        Loading your sites...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="examples-section">
+                <h3>💡 Try These Commands</h3>
+                <button class="example-command" onclick="sendQuickCommand('Create a new blog site called my-awesome-blog')">
+                    "Create a new blog site called my-awesome-blog"
+                </button>
+                <button class="example-command" onclick="sendQuickCommand('Add a page called About with content about myself')">
+                    "Add a page called About with content about myself"
+                </button>
+                <button class="example-command" onclick="sendQuickCommand('Show me all my sites')">
+                    "Show me all my sites"
+                </button>
+                <button class="example-command" onclick="sendQuickCommand('Preview my site')">
+                    "Preview my site"
+                </button>
+                <button class="example-command" onclick="sendQuickCommand('Publish my site to the web')">
+                    "Publish my site to the web"
+                </button>
+            </div>
+            
+            <div class="quick-actions">
+                <h3>⚡ Quick Actions</h3>
+                <button class="btn secondary small" onclick="previewSite()" id="previewBtn" disabled>
+                    👀 Preview Site
+                </button>
+                <button class="btn small" onclick="deploySite()" id="deployBtn" disabled>
+                    🚀 Deploy to Web
+                </button>
+                <button class="btn secondary small" onclick="clearHistory()" id="clearBtn">
+                    🧹 Clear Chat
+                </button>
+            </div>
+            
+            <div class="ai-status" id="aiStatusDetails">
+                <strong>🤖 AI Status:</strong> <span id="aiMode">Checking...</span>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>🤖 AI Assistant</h2>
+                <p>Tell me what you want to do with your website in plain English!</p>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <strong>🤖 HAX Assistant:</strong>
+                    Welcome! I'm here to help you create and manage websites with HAX. Here's what I can do:
+                    
+                    <ul style="margin: 1rem 0;">
+                        <li><strong>Create websites:</strong> "Create a site called my-portfolio"</li>
+                        <li><strong>Add content:</strong> "Add a page about my hobbies"</li>
+                        <li><strong>Edit pages:</strong> "Update the homepage with a welcome message"</li>
+                        <li><strong>Preview sites:</strong> "Show me how my site looks"</li>
+                        <li><strong>Publish online:</strong> "Put my site on the internet"</li>
+                    </ul>
+                    
+                    Just type what you want to do in normal English - no technical knowledge required! 🎉
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <div class="input-container">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type what you want to do... (e.g., 'Create a new blog site')"
+                        onkeydown="handleKeyPress(event)"
+                        rows="1"
+                    ></textarea>
+                    <button class="btn" onclick="sendMessage()" id="sendBtn">
+                        Send
+                    </button>
+                </div>
+                    <div style="margin-top: 1rem;">
+                        <label for="siteDropdown" style="font-weight:600; margin-right:0.5rem;">Select site:</label>
+                        <select id="siteDropdown" onchange="dropdownSelectSite()" style="padding:0.5rem; border-radius:6px;">
+                            <option value="">-- Choose a site --</option>
+                        </select>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSite = null;
+        let isProcessing = false;
+        let messageHistory = [];
+        let aiStatus = 'unknown';
+
+        // Initialize the application
+        async function init() {
+            console.log('🚀 Initializing HAX AI Interface...');
+            
+            try {
+                // Load initial data
+                await Promise.all([
+                    loadSites(),
+                    checkAIStatus()
+                ]);
+                
+                addMessage('system', '🟢 System ready! Your AI assistant is online and ready to help.');
+                
+                // Setup auto-resize for textarea
+                const textarea = document.getElementById('messageInput');
+                textarea.addEventListener('input', autoResizeTextarea);
+                
+                // Focus on input
+                textarea.focus();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                addMessage('system', '❌ System initialization failed. Please refresh the page.');
+            }
+        }
+
+        // Check AI status
+        async function checkAIStatus() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                aiStatus = data.aiStatus;
+                updateAIStatus(aiStatus);
+                
+            } catch (error) {
+                console.error('Error checking AI status:', error);
+                updateAIStatus({ hasAPIKey: false, aiProvider: 'unknown' });
+            }
+        }
+
+        // Update AI status display
+        function updateAIStatus(status) {
+            const statusElement = document.getElementById('aiStatus');
+            const detailsElement = document.getElementById('aiMode');
+            
+            if (status.hasAPIKey) {
+                statusElement.textContent = `🤖 ${status.aiProvider} AI Ready`;
+                detailsElement.innerHTML = `<strong>Enhanced AI:</strong> ${status.aiProvider} powered natural language processing`;
+            } else {
+                statusElement.textContent = '🧠 Smart Pattern Matching';
+                detailsElement.innerHTML = '<strong>Smart Mode:</strong> Advanced pattern matching (add API key for full AI features)';
+            }
+        }
+
+        // Auto-resize textarea based on content
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('messageInput');
+            textarea.style.height = 'auto';
+            const newHeight = Math.min(textarea.scrollHeight, 120);
+            textarea.style.height = newHeight + 'px';
+        }
+
+        // Load available sites
+        async function loadSites() {
+            try {
+                const response = await fetch('/api/sites');
+                const data = await response.json();
+                
+                const sitesList = document.getElementById('sitesList');
+                
+                if (data.sites.length === 0) {
+                    sitesList.innerHTML = `
+                        <div style="text-align: center; color: #666; padding: 2rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🌟</div>
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">No sites yet!</div>
+                            <div style="font-size: 0.9rem;">Create your first website by saying:<br>"Create a site called my-blog"</div>
+                        </div>
+                    `;
+                        updateSiteDropdown([]);
+                } else {
+                    sitesList.innerHTML = data.sites.map(site => `
+                        <div class="site-item ${site.hasError ? 'error' : ''}" onclick="selectSite('${site.name}')" data-site="${site.name}">
+                            <div class="site-name">${site.name}</div>
+                            <div class="${site.hasError ? 'site-error' : 'site-info'}">
+                                ${site.hasError ? site.error : `${site.pageCount || 0} pages • ${site.theme || 'default'} theme`}
+                            </div>
+                        </div>
+                    `).join('');
+                        updateSiteDropdown(data.sites.map(site => site.name));
+                }
+            } catch (error) {
+                console.error('Error loading sites:', error);
+                document.getElementById('sitesList').innerHTML = `
+                    <div style="text-align: center; color: #f44336; padding: 2rem;">
+                        <div>❌ Error loading sites</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem;">Check if the server is running</div>
+                    </div>
+                `;
+                    updateSiteDropdown([]);
+            }
+        }
+
+            // Update site dropdown options
+            function updateSiteDropdown(siteNames) {
+                const dropdown = document.getElementById('siteDropdown');
+                dropdown.innerHTML = '<option value="">-- Choose a site --</option>';
+                siteNames.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    dropdown.appendChild(opt);
+                });
+                // If a site is already selected, set it
+                if (currentSite && siteNames.includes(currentSite)) {
+                    dropdown.value = currentSite;
+                }
+            }
+
+            // Handle dropdown site selection
+            function dropdownSelectSite() {
+                const dropdown = document.getElementById('siteDropdown');
+                const selected = dropdown.value;
+                if (selected) {
+                    selectSite(selected);
+                }
+            }
+
+        // Select a site
+        function selectSite(siteName) {
+            currentSite = siteName;
+            
+            // Update UI
+            document.querySelectorAll('.site-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const selectedItem = document.querySelector(`[data-site="${siteName}"]`);
+            if (selectedItem) {
+                selectedItem.classList.add('active');
+            }
+            
+            // Enable site actions
+            document.getElementById('previewBtn').disabled = false;
+            document.getElementById('deployBtn').disabled = false;
+            
+            addMessage('system', `📁 Selected site: <strong>${siteName}</strong>. You can now preview or deploy it using the buttons on the left.`);
+        }
+
+        // Send message to AI
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+            
+            isProcessing = true;
+            input.value = '';
+            autoResizeTextarea();
+            
+            // Update UI
+            updateSendButton(true);
+            addMessage('user', message);
+            
+            // Add typing indicator
+            const typingId = addTypingIndicator();
+            
+            try {
+                const response = await fetch('/api/ai-command', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        context: {
+                            currentSite: currentSite,
+                            timestamp: new Date().toISOString()
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Remove typing indicator
+                removeTypingIndicator(typingId);
+                
+                // Show AI explanation
+                addMessage('ai', result.explanation);
+                
+                // Show command executions
+                if (result.executions && result.executions.length > 0) {
+                    for (const execution of result.executions) {
+                        if (execution.success) {
+                            addCommandOutput(execution.command, execution.output, false);
+                        } else {
+                            addCommandOutput(execution.command, execution.error, true);
+                        }
+                    }
+                }
+                
+                // Handle special actions
+                handleSpecialActions(result);
+                
+                // Show next steps if provided
+                if (result.nextSteps) {
+                    setTimeout(() => {
+                        addMessage('system', `💡 <strong>Next:</strong> ${result.nextSteps}`);
+                    }, 1000);
+                }
+                
+                // Refresh sites list if needed
+                if (shouldRefreshSites(message, result)) {
+                    setTimeout(loadSites, 1500);
+                }
+                
+            } catch (error) {
+                removeTypingIndicator(typingId);
+                addMessage('ai', `❌ Sorry, I encountered an error: ${error.message}. Please try again or rephrase your request.`);
+            } finally {
+                isProcessing = false;
+                updateSendButton(false);
+                input.focus();
+            }
+        }
+
+        // Handle special actions from AI response
+        function handleSpecialActions(result) {
+            if (result.action === 'deploy' && result.deploymentUrl) {
+                showDeploymentSuccess(result.deploymentUrl);
+            }
+            
+            if (result.action === 'serve' && result.siteName) {
+                setTimeout(() => {
+                    const url = 'http://localhost:3000';
+                    addMessage('system', `🌐 Opening preview in new tab: <a href="${url}" target="_blank">${url}</a>`);
+                    window.open(url, '_blank');
+                }, 2000);
+            }
+            
+            if (result.autoSelect && !currentSite) {
+                selectSite(result.autoSelect);
+            }
+        }
+
+        // Show deployment success message
+        function showDeploymentSuccess(url) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const deployDiv = document.createElement('div');
+            deployDiv.className = 'deployment-success';
+            deployDiv.innerHTML = `
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🎉 Your site is live!</div>
+                <a href="${url}" target="_blank">${url}</a>
+                <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #666;">Click to open your website</div>
+            `;
+            messagesContainer.appendChild(deployDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Check if sites list should be refreshed
+        function shouldRefreshSites(message, result) {
+            const lowerMessage = message.toLowerCase();
+            return (
+                (lowerMessage.includes('create') && lowerMessage.includes('site')) ||
+                (lowerMessage.includes('delete') && lowerMessage.includes('site')) ||
+                result.action === 'create-site'
+            );
+        }
+
+        // Add typing indicator
+        function addTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            const typingId = 'typing-' + Date.now();
+            
+            typingDiv.id = typingId;
+            typingDiv.className = 'message ai typing-indicator';
+            typingDiv.innerHTML = '<strong>🤖 HAX Assistant:</strong><br>Thinking...';
+            
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return typingId;
+        }
+
+        // Remove typing indicator
+        function removeTypingIndicator(typingId) {
+            const typingElement = document.getElementById(typingId);
+            if (typingElement) {
+                typingElement.remove();
+            }
+        }
+
+        // Send quick command
+        function sendQuickCommand(command) {
+            document.getElementById('messageInput').value = command;
+            autoResizeTextarea();
+            sendMessage();
+        }
+
+        // Preview site
+        async function previewSite() {
+            if (!currentSite) {
+                addMessage('system', '⚠️ Please select a site first by clicking on it in the sidebar.');
+                return;
+            }
+            
+            sendQuickCommand(`preview ${currentSite}`);
+        }
+
+        // Deploy site
+        async function deploySite() {
+            if (!currentSite) {
+                addMessage('system', '⚠️ Please select a site first by clicking on it in the sidebar.');
+                return;
+            }
+            
+            const customDomain = prompt('Enter a custom domain (optional):\nExample: myblog.surge.sh\n\nLeave blank for auto-generated domain:');
+            
+            if (customDomain === null) return; // User cancelled
+            
+            const command = customDomain ? 
+                `publish ${currentSite} to ${customDomain}` : 
+                `publish ${currentSite} to the web`;
+                
+            sendQuickCommand(command);
+        }
+
+        // Clear chat history
+        async function clearHistory() {
+            if (confirm('Clear all chat messages? This action cannot be undone.')) {
+                try {
+                    await fetch('/api/ai/clear-history', { method: 'POST' });
+                    document.getElementById('chatMessages').innerHTML = `
+                        <div class="message ai">
+                            <strong>🤖 HAX Assistant:</strong>
+                            Chat history cleared! How can I help you with your websites today?
+                        </div>
+                    `;
+                    addMessage('system', '🧹 Chat history cleared successfully.');
+                } catch (error) {
+                    addMessage('system', '❌ Failed to clear history. Please try again.');
+                }
+            }
+        }
+
+        // Add message to chat
+        function addMessage(type, content) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            let icon = '';
+            let label = '';
+            switch (type) {
+                case 'user': 
+                    icon = '👤'; 
+                    label = 'You';
+                    break;
+                case 'ai': 
+                    icon = '🤖'; 
+                    label = 'HAX Assistant';
+                    break;
+                case 'system': 
+                    icon = '⚙️'; 
+                    label = 'System';
+                    break;
+            }
+            
+            messageDiv.innerHTML = `<strong>${icon} ${label}:</strong><br>${content}`;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Add command output
+        function addCommandOutput(command, output, isError) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const outputDiv = document.createElement('div');
+            outputDiv.className = isError ? 'error-output' : 'command-output';
+            
+            outputDiv.innerHTML = `<strong>$ ${command}</strong>\n${output}`;
+            messagesContainer.appendChild(outputDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Update send button state
+        function updateSendButton(processing) {
+            const sendBtn = document.getElementById('sendBtn');
+            const input = document.getElementById('messageInput');
+            
+            if (processing) {
+                sendBtn.innerHTML = '<div class="loading"></div>';
+                sendBtn.disabled = true;
+                input.disabled = true;
+            } else {
+                sendBtn.innerHTML = 'Send';
+                sendBtn.disabled = false;
+                input.disabled = false;
+            }
+        }
+
+        // Handle keyboard input
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey && !isProcessing) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

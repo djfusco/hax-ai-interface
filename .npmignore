@@ -1,0 +1,71 @@
+# Development files
+node_modules/
+.env
+.env.local
+.env.*.local
+
+# Test files  
+test/
+tests/
+*.test.js
+*.spec.js
+coverage/
+
+# Development tools
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (development)
+docs/
+examples/
+screenshots/
+
+# Build artifacts (keep dist/ for distribution)
+tmp/
+temp/
+
+# User data (never include user sites)
+user-sites/
+.hax-ai/
+
+# Development configuration
+nodemon.json
+.eslintrc*
+.prettierrc*
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Runtime files
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: Include in npm package
+# bin/
+# lib/
+# public/
+# templates/
+# package.json
+# README.md
+# LICENSE

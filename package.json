@@ -1,0 +1,88 @@
+{
+  "name": "hax-ai-interface",
+  "version": "1.0.0",
+  "description": "Create and manage beautiful websites using AI conversation - powered by HAX",
+  "main": "lib/server.js",
+  "bin": {
+    "hax-ai": "./bin/hax-ai.js",
+    "hax-ai-interface": "./bin/hax-ai.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "public/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/hax-ai.js",
+    "dev": "nodemon bin/hax-ai.js",
+    "test": "echo \"Tests coming soon\" && exit 0",
+    "prepublishOnly": "echo \"Ready to publish HAX AI Interface\"",
+    "postinstall": "node -e \"console.log('\\n🎉 HAX AI Interface installed successfully!\\n💡 Run: npx hax-ai-interface\\n🌐 Then open your browser to start creating websites!\\n')\""
+  },
+  "keywords": [
+    "hax",
+    "ai",
+    "website",
+    "cms",
+    "cli",
+    "web-development",
+    "no-code",
+    "low-code",
+    "site-builder",
+    "conversation",
+    "natural-language",
+    "surge",
+    "deployment",
+    "websites",
+    "web-components",
+    "static-site",
+    "generator"
+  ],
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com",
+    "url": "https://your-website.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hax-ai-interface.git"
+  },
+  "homepage": "https://github.com/yourusername/hax-ai-interface#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/hax-ai-interface/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "dependencies": {
+    "@haxtheweb/create": "latest",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "inquirer": "^8.2.6",
+    "open": "^9.1.0",
+    "ora": "^5.4.1",
+    "ws": "^8.14.2"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.61.0",
+    "openai": "^4.20.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "preferGlobal": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/yourusername"
+  }
+}
