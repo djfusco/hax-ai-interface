@@ -86,6 +86,8 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             min-height: 0;
+            min-width: 0;
+            overflow: hidden;
         }
 
         .chat-header {
@@ -112,6 +114,7 @@
             flex: 1;
             padding: 1rem;
             overflow-y: auto;
+            overflow-x: hidden;
             min-height: 0;
             max-height: calc(100vh - 300px);
         }
@@ -123,6 +126,9 @@
             animation: fadeIn 0.3s ease-in;
             line-height: 1.5;
             word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .message.user {
@@ -201,6 +207,28 @@
 
         .deployment-success a:hover {
             text-decoration: underline;
+        }
+
+        .message a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dotted #667eea;
+            transition: all 0.2s ease;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .message a:hover {
+            color: #764ba2;
+            border-bottom: 1px solid #764ba2;
+            text-decoration: none;
+        }
+
+        .message a:visited {
+            color: #8e4ec6;
         }
 
         .chat-input {
@@ -680,8 +708,8 @@
                 <button class="btn secondary small" onclick="openSettingsModal()" id="settingsBtn">
                     🔐 Configure API Keys
                 </button>
-                <button class="btn secondary small" onclick="openDeploymentModal()" id="deploymentSettingsBtn">
-                    🌐 Deployment Settings
+                <button class="btn secondary small" onclick="openSurgeStatusModal()" id="surgeStatusBtn">
+                    🌐 Surge Deployment Status
                 </button>
             </div>
         </div>
@@ -766,43 +794,23 @@
         </div>
     </div>
 
-    <!-- Deployment Settings Modal -->
-    <div id="deploymentModal" class="modal">
+    <!-- Surge Status Modal -->
+    <div id="surgeStatusModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>🌐 Deployment Settings</h3>
-                <span class="close" onclick="closeDeploymentModal()">&times;</span>
+                <h3>🌐 Surge.sh Deployment Status</h3>
+                <span class="close" onclick="closeSurgeStatusModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 1rem; color: #666;">
-                    Configure Surge.sh for one-click website deployment to the web.
-                </p>
-                
-                <div class="settings-group">
-                    <h4>📧 Surge Login (Email)</h4>
-                    <input type="email" id="surgeLogin" placeholder="your-email@example.com" 
-                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
-                </div>
-                
-                <div class="settings-group" style="margin-top: 1rem;">
-                    <h4>🔐 Surge Token</h4>
-                    <input type="password" id="surgeToken" placeholder="Your Surge token..." 
-                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
-                    <small style="color: #666;">
-                        Run <code>surge login</code> then <code>surge token</code> in your terminal to get these values
-                    </small>
-                </div>
-                
-                <div class="settings-group" style="margin-top: 1rem;">
-                    <h4>🏠 Default Domain (Optional)</h4>
-                    <input type="text" id="surgeDomain" placeholder="mysite.surge.sh" 
-                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
-                    <small style="color: #666;">Leave blank for auto-generated domains</small>
+                <div id="surgeStatusContent">
+                    <div style="text-align: center; color: #666; padding: 2rem;">
+                        <div class="loading"></div><br>
+                        Checking Surge status...
+                    </div>
                 </div>
                 
                 <div style="margin-top: 2rem; text-align: right;">
-                    <button class="btn secondary" onclick="closeDeploymentModal()" style="margin-right: 0.5rem;">Cancel</button>
-                    <button class="btn" onclick="saveDeploymentSettings()">Save Settings</button>
+                    <button class="btn secondary" onclick="closeSurgeStatusModal()">Close</button>
                 </div>
             </div>
         </div>
@@ -1183,7 +1191,11 @@
                     break;
             }
             
-            messageDiv.innerHTML = `<strong>${icon} ${label}:</strong><br>${content}`;
+            // Convert URLs to clickable links
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const contentWithLinks = content.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            messageDiv.innerHTML = `<strong>${icon} ${label}:</strong><br>${contentWithLinks}`;
             messagesContainer.appendChild(messageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -1231,6 +1243,81 @@
 
         function closeSettingsModal() {
             document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function openSurgeStatusModal() {
+            document.getElementById('surgeStatusModal').style.display = 'block';
+            checkSurgeStatus();
+        }
+
+        function closeSurgeStatusModal() {
+            document.getElementById('surgeStatusModal').style.display = 'none';
+        }
+
+        // Check Surge login status
+        async function checkSurgeStatus() {
+            try {
+                const response = await fetch('/api/surge/status');
+                const status = await response.json();
+                
+                const contentDiv = document.getElementById('surgeStatusContent');
+                
+                if (status.loggedIn) {
+                    contentDiv.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                            <h3 style="color: #4caf50; margin-bottom: 1rem;">Surge.sh Ready!</h3>
+                            <p style="margin-bottom: 1rem;">
+                                <strong>Logged in as:</strong> ${status.user}<br>
+                                <strong>Plan:</strong> ${status.plan || 'Free'}
+                            </p>
+                            <p style="color: #666;">
+                                You can deploy websites with commands like:
+                            </p>
+                            <div style="background: #f5f5f5; padding: 1rem; border-radius: 6px; margin: 1rem 0; text-align: left;">
+                                • "Deploy my site"<br>
+                                • "Publish my blog to the web"<br>
+                                • "Put my portfolio online"
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    contentDiv.innerHTML = `
+                        <div style="text-align: center; padding: 2rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                            <h3 style="color: #ff9800; margin-bottom: 1rem;">Surge.sh Setup Required</h3>
+                            <p style="margin-bottom: 1.5rem; color: #666;">
+                                To deploy websites to the internet, you need to setup Surge.sh (it's free!)
+                            </p>
+                            <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 6px; text-align: left; margin: 1rem 0;">
+                                <h4 style="margin-bottom: 1rem;">🚀 Quick Setup:</h4>
+                                <p><strong>1.</strong> Create account at <a href="https://surge.sh" target="_blank">surge.sh</a></p>
+                                <p><strong>2.</strong> Open your terminal and run:</p>
+                                <code style="background: #333; color: #4caf50; padding: 0.5rem; border-radius: 3px; display: block; margin: 0.5rem 0;">surge login</code>
+                                <p><strong>3.</strong> Enter your Surge.sh email and password</p>
+                                <p><strong>4.</strong> Try deploying again!</p>
+                            </div>
+                            <button class="btn" onclick="checkSurgeStatus()" style="margin-top: 1rem;">
+                                🔄 Check Again
+                            </button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                const contentDiv = document.getElementById('surgeStatusContent');
+                contentDiv.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                        <h3 style="color: #f44336; margin-bottom: 1rem;">Check Failed</h3>
+                        <p style="color: #666;">
+                            Could not check Surge status. Make sure Surge CLI is installed.
+                        </p>
+                        <button class="btn" onclick="checkSurgeStatus()" style="margin-top: 1rem;">
+                            🔄 Try Again
+                        </button>
+                    </div>
+                `;
+            }
         }
 
         function openDeploymentModal() {
@@ -1340,13 +1427,13 @@
         // Close modals when clicking outside
         window.onclick = function(event) {
             const settingsModal = document.getElementById('settingsModal');
-            const deploymentModal = document.getElementById('deploymentModal');
+            const surgeStatusModal = document.getElementById('surgeStatusModal');
             
             if (event.target === settingsModal) {
                 closeSettingsModal();
             }
-            if (event.target === deploymentModal) {
-                closeDeploymentModal();
+            if (event.target === surgeStatusModal) {
+                closeSurgeStatusModal();
             }
         }
 
