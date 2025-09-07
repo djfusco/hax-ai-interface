@@ -42,18 +42,18 @@
     "generator"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com",
-    "url": "https://your-website.com"
+    "name": "djfusco",
+    "email": "djfusco@users.noreply.github.com",
+    "url": "https://github.com/djfusco"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/hax-ai-interface.git"
+    "url": "https://github.com/djfusco/hax-ai-interface.git"
   },
-  "homepage": "https://github.com/yourusername/hax-ai-interface#readme",
+  "homepage": "https://github.com/djfusco/hax-ai-interface#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/hax-ai-interface/issues"
+    "url": "https://github.com/djfusco/hax-ai-interface/issues"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -68,6 +68,7 @@
     "inquirer": "^8.2.6",
     "open": "^9.1.0",
     "ora": "^5.4.1",
+    "surge": "^0.23.1",
     "ws": "^8.14.2"
   },
   "optionalDependencies": {
@@ -83,6 +84,6 @@
   },
   "funding": {
     "type": "github",
-    "url": "https://github.com/sponsors/yourusername"
+    "url": "https://github.com/sponsors/djfusco"
   }
 }

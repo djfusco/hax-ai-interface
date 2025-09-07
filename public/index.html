@@ -506,6 +506,111 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 0, 0, 0.5);
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            border-radius: 12px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .close {
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .settings-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-group h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .settings-group input {
+            transition: border-color 0.2s;
+        }
+
+        .settings-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        .settings-group small {
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .settings-group code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        .settings-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .settings-section button {
+            display: block;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -569,6 +674,16 @@
             <div class="ai-status" id="aiStatusDetails">
                 <strong>🤖 AI Status:</strong> <span id="aiMode">Checking...</span>
             </div>
+            
+            <div class="settings-section">
+                <h3>⚙️ Settings</h3>
+                <button class="btn secondary small" onclick="openSettingsModal()" id="settingsBtn">
+                    🔐 Configure API Keys
+                </button>
+                <button class="btn secondary small" onclick="openDeploymentModal()" id="deploymentSettingsBtn">
+                    🌐 Deployment Settings
+                </button>
+            </div>
         </div>
         
         <div class="chat-container">
@@ -612,6 +727,83 @@
                             <option value="">-- Choose a site --</option>
                         </select>
                     </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 Configure AI API Keys</h3>
+                <span class="close" onclick="closeSettingsModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; color: #666;">
+                    Add your AI API key to enable advanced natural language understanding. 
+                    Choose one provider:
+                </p>
+                
+                <div class="settings-group">
+                    <h4>🤖 Anthropic Claude (Recommended)</h4>
+                    <input type="password" id="anthropicKey" placeholder="sk-ant-api03-..." 
+                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
+                    <small style="color: #666;">Get your key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></small>
+                </div>
+                
+                <div class="settings-group" style="margin-top: 1.5rem;">
+                    <h4>🧠 OpenAI GPT (Alternative)</h4>
+                    <input type="password" id="openaiKey" placeholder="sk-..." 
+                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
+                    <small style="color: #666;">Get your key at <a href="https://platform.openai.com" target="_blank">platform.openai.com</a></small>
+                </div>
+                
+                <div style="margin-top: 2rem; text-align: right;">
+                    <button class="btn secondary" onclick="closeSettingsModal()" style="margin-right: 0.5rem;">Cancel</button>
+                    <button class="btn" onclick="saveAPISettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deployment Settings Modal -->
+    <div id="deploymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🌐 Deployment Settings</h3>
+                <span class="close" onclick="closeDeploymentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; color: #666;">
+                    Configure Surge.sh for one-click website deployment to the web.
+                </p>
+                
+                <div class="settings-group">
+                    <h4>📧 Surge Login (Email)</h4>
+                    <input type="email" id="surgeLogin" placeholder="your-email@example.com" 
+                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+                
+                <div class="settings-group" style="margin-top: 1rem;">
+                    <h4>🔐 Surge Token</h4>
+                    <input type="password" id="surgeToken" placeholder="Your Surge token..." 
+                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
+                    <small style="color: #666;">
+                        Run <code>surge login</code> then <code>surge token</code> in your terminal to get these values
+                    </small>
+                </div>
+                
+                <div class="settings-group" style="margin-top: 1rem;">
+                    <h4>🏠 Default Domain (Optional)</h4>
+                    <input type="text" id="surgeDomain" placeholder="mysite.surge.sh" 
+                           style="width: 100%; padding: 0.75rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 6px;">
+                    <small style="color: #666;">Leave blank for auto-generated domains</small>
+                </div>
+                
+                <div style="margin-top: 2rem; text-align: right;">
+                    <button class="btn secondary" onclick="closeDeploymentModal()" style="margin-right: 0.5rem;">Cancel</button>
+                    <button class="btn" onclick="saveDeploymentSettings()">Save Settings</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1028,6 +1220,133 @@
             if (event.key === 'Enter' && !event.shiftKey && !isProcessing) {
                 event.preventDefault();
                 sendMessage();
+            }
+        }
+
+        // Settings Modal Functions
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'block';
+            loadCurrentAPISettings();
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        function openDeploymentModal() {
+            document.getElementById('deploymentModal').style.display = 'block';
+            loadCurrentDeploymentSettings();
+        }
+
+        function closeDeploymentModal() {
+            document.getElementById('deploymentModal').style.display = 'none';
+        }
+
+        // Load current settings from server
+        async function loadCurrentAPISettings() {
+            try {
+                const response = await fetch('/api/config/api-keys');
+                if (response.ok) {
+                    const config = await response.json();
+                    document.getElementById('anthropicKey').value = config.anthropicKey || '';
+                    document.getElementById('openaiKey').value = config.openaiKey || '';
+                }
+            } catch (error) {
+                console.log('Could not load current API settings');
+            }
+        }
+
+        async function loadCurrentDeploymentSettings() {
+            try {
+                const response = await fetch('/api/config/deployment');
+                if (response.ok) {
+                    const config = await response.json();
+                    document.getElementById('surgeLogin').value = config.surgeLogin || '';
+                    document.getElementById('surgeToken').value = config.surgeToken || '';
+                    document.getElementById('surgeDomain').value = config.surgeDomain || '';
+                }
+            } catch (error) {
+                console.log('Could not load current deployment settings');
+            }
+        }
+
+        // Save API settings
+        async function saveAPISettings() {
+            const anthropicKey = document.getElementById('anthropicKey').value.trim();
+            const openaiKey = document.getElementById('openaiKey').value.trim();
+
+            if (!anthropicKey && !openaiKey) {
+                alert('Please enter at least one API key (Anthropic or OpenAI)');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/config/api-keys', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        anthropicKey: anthropicKey || undefined,
+                        openaiKey: openaiKey || undefined
+                    })
+                });
+
+                if (response.ok) {
+                    closeSettingsModal();
+                    addMessage('system', '✅ API keys saved successfully! The AI capabilities have been updated.');
+                    // Refresh AI status
+                    await checkAIStatus();
+                } else {
+                    const error = await response.text();
+                    alert('Failed to save API keys: ' + error);
+                }
+            } catch (error) {
+                alert('Error saving API keys: ' + error.message);
+            }
+        }
+
+        // Save deployment settings
+        async function saveDeploymentSettings() {
+            const surgeLogin = document.getElementById('surgeLogin').value.trim();
+            const surgeToken = document.getElementById('surgeToken').value.trim();
+            const surgeDomain = document.getElementById('surgeDomain').value.trim();
+
+            try {
+                const response = await fetch('/api/config/deployment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        surgeLogin: surgeLogin || undefined,
+                        surgeToken: surgeToken || undefined,
+                        surgeDomain: surgeDomain || undefined
+                    })
+                });
+
+                if (response.ok) {
+                    closeDeploymentModal();
+                    addMessage('system', '✅ Deployment settings saved successfully! You can now deploy sites with one click.');
+                } else {
+                    const error = await response.text();
+                    alert('Failed to save deployment settings: ' + error);
+                }
+            } catch (error) {
+                alert('Error saving deployment settings: ' + error.message);
+            }
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const settingsModal = document.getElementById('settingsModal');
+            const deploymentModal = document.getElementById('deploymentModal');
+            
+            if (event.target === settingsModal) {
+                closeSettingsModal();
+            }
+            if (event.target === deploymentModal) {
+                closeDeploymentModal();
             }
         }
 
