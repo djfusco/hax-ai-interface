@@ -980,6 +980,14 @@
                                 ${site.hasError ? site.error : 
                                   site.serverError ? `Server Error: ${site.serverError}` :
                                   `${site.pageCount || 0} pages • ${site.theme || 'default'} theme`}
+                                ${site.deployment && site.deployment.isDeployed ? `
+                                    <div style="margin-top: 0.5rem; padding: 0.5rem; background: #e8f5e8; border-radius: 4px; font-size: 0.85rem;">
+                                        🌐 <strong>Deployed:</strong> <a href="${site.deployment.url}" target="_blank" style="color: #2e7d32;">${site.deployment.domain}</a>
+                                        <div style="color: #666; font-size: 0.8rem; margin-top: 0.25rem;">
+                                            Last deployed: ${new Date(site.deployment.lastDeployedAt).toLocaleDateString()} • ${site.deployment.deployCount} deployment${site.deployment.deployCount > 1 ? 's' : ''}
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                             <div class="site-controls">
                                 ${site.serverStatus === 'running' ? `
@@ -993,6 +1001,9 @@
                                 ` : `
                                     <button class="btn small primary" onclick="startSite('${site.name}')" title="Start Server">▶️ Start</button>
                                 `}
+                                ${site.deployment && site.deployment.isDeployed ? `
+                                    <a href="${site.deployment.url}" target="_blank" class="btn small" style="background: #2e7d32; color: white;" title="View Live Site">🚀 Live</a>
+                                ` : ''}
                             </div>
                         </div>
                     `).join('');
