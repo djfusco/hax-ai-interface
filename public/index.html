@@ -947,6 +947,15 @@
                 const selected = dropdown.value;
                 if (selected) {
                     selectSite(selected);
+                } else {
+                    // Clear selection when "-- Choose a site --" is selected
+                    currentSite = null;
+                    document.querySelectorAll('.site-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Disable site actions when no site is selected
+                    document.getElementById('previewBtn').disabled = true;
+                    document.getElementById('deployBtn').disabled = true;
                 }
             }
 
@@ -1139,15 +1148,8 @@
                 return;
             }
             
-            const customDomain = prompt('Enter a custom domain (optional):\nExample: myblog.surge.sh\n\nLeave blank for auto-generated domain:');
-            
-            if (customDomain === null) return; // User cancelled
-            
-            const command = customDomain ? 
-                `publish ${currentSite} to ${customDomain}` : 
-                `publish ${currentSite} to the web`;
-                
-            sendQuickCommand(command);
+            // Just deploy with auto-generated domain, same as typing "deploy site"
+            sendQuickCommand(`deploy ${currentSite}`);
         }
 
         // Clear chat history
