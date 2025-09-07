@@ -366,6 +366,59 @@
             font-style: italic;
         }
 
+        .site-header {
+            cursor: pointer;
+        }
+
+        .site-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .status-indicator {
+            font-size: 0.8rem;
+        }
+
+        .status-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .site-controls {
+            margin-top: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .site-controls .btn {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+            min-width: auto;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .site-controls .btn.primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .site-controls .btn.secondary {
+            background: #757575;
+            color: white;
+        }
+
+        .site-controls .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
         .examples-section {
             margin-bottom: 2rem;
         }
@@ -901,17 +954,49 @@
                             <div style="font-size: 0.9rem;">Create your first website by saying:<br>"Create a site called my-blog"</div>
                         </div>
                     `;
-                        updateSiteDropdown([]);
+                    updateSiteDropdown([]);
                 } else {
                     sitesList.innerHTML = data.sites.map(site => `
-                        <div class="site-item ${site.hasError ? 'error' : ''}" onclick="selectSite('${site.name}')" data-site="${site.name}">
-                            <div class="site-name">${site.name}</div>
-                            <div class="${site.hasError ? 'site-error' : 'site-info'}">
-                                ${site.hasError ? site.error : `${site.pageCount || 0} pages • ${site.theme || 'default'} theme`}
+                        <div class="site-item ${site.hasError ? 'error' : ''}" data-site="${site.name}">
+                            <div class="site-header" onclick="selectSite('${site.name}')">
+                                <div class="site-name">${site.name}</div>
+                                <div class="site-status">
+                                    <span class="status-indicator ${site.serverStatus}">
+                                        ${site.serverStatus === 'running' ? '🟢' : 
+                                          site.serverStatus === 'error' ? '🔴' : 
+                                          site.serverStatus === 'starting' ? '🟡' : '⚫'}
+                                    </span>
+                                    <span class="status-text">
+                                        ${site.serverStatus === 'running' ? 
+                                            `Running on :${site.port}` : 
+                                          site.serverStatus === 'error' ? 'Error' :
+                                          site.serverStatus === 'starting' ? 'Starting...' :
+                                            'Stopped'
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="${site.hasError ? 'site-error' : site.serverError ? 'site-error' : 'site-info'}">
+                                ${site.hasError ? site.error : 
+                                  site.serverError ? `Server Error: ${site.serverError}` :
+                                  `${site.pageCount || 0} pages • ${site.theme || 'default'} theme`}
+                            </div>
+                            <div class="site-controls">
+                                ${site.serverStatus === 'running' ? `
+                                    <button class="btn small secondary" onclick="stopSite('${site.name}')" title="Stop Server">⏹️ Stop</button>
+                                    <button class="btn small" onclick="restartSite('${site.name}')" title="Restart Server">🔄 Restart</button>
+                                    <a href="${site.url}" target="_blank" class="btn small primary" title="Open Site">🌐 Open</a>
+                                ` : site.serverStatus === 'error' ? `
+                                    <button class="btn small primary" onclick="startSite('${site.name}')" title="Try Start Again">▶️ Retry</button>
+                                ` : site.serverStatus === 'starting' ? `
+                                    <button class="btn small secondary" disabled title="Starting...">⏳ Starting...</button>
+                                ` : `
+                                    <button class="btn small primary" onclick="startSite('${site.name}')" title="Start Server">▶️ Start</button>
+                                `}
                             </div>
                         </div>
                     `).join('');
-                        updateSiteDropdown(data.sites.map(site => site.name));
+                    updateSiteDropdown(data.sites.map(site => site.name));
                 }
             } catch (error) {
                 console.error('Error loading sites:', error);
@@ -921,7 +1006,7 @@
                         <div style="font-size: 0.9rem; margin-top: 0.5rem;">Check if the server is running</div>
                     </div>
                 `;
-                    updateSiteDropdown([]);
+                updateSiteDropdown([]);
             }
         }
 
@@ -1438,6 +1523,81 @@
                 closeSurgeStatusModal();
             }
         }
+
+        async function startSite(siteName) {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Starting...';
+            
+            try {
+                const response = await fetch(`/api/sites/${siteName}/start`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadSites(); // Refresh the sites list
+                } else {
+                    alert('Failed to start site: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error starting site: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '▶️ Start';
+            }
+        }
+
+        async function stopSite(siteName) {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Stopping...';
+            
+            try {
+                const response = await fetch(`/api/sites/${siteName}/stop`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadSites(); // Refresh the sites list
+                } else {
+                    alert('Failed to stop site: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error stopping site: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '⏹️ Stop';
+            }
+        }
+
+        async function restartSite(siteName) {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Restarting...';
+            
+            try {
+                const response = await fetch(`/api/sites/${siteName}/restart`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadSites(); // Refresh the sites list
+                } else {
+                    alert('Failed to restart site: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error restarting site: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔄 Restart';
+            }
+        }
+
+        // Auto-refresh sites list every 5 seconds
+        setInterval(loadSites, 5000);
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', init);
