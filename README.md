@@ -23,6 +23,40 @@ npx hax-ai-interface
 
 That's it! The interface will open in your browser and guide you through everything.
 
+---
+
+## 🏁 Step-by-Step Setup Guide
+
+### 1. Install Node.js (One-Time)
+
+- Go to [nodejs.org](https://nodejs.org)
+- Download the **LTS** version for your computer (Windows, Mac, or Linux)
+- Open the installer and follow the instructions
+- After installing, open your **Terminal** and type:
+  ```bash
+  node -v
+  ```
+  If you see a version number, Node.js is installed!
+
+
+### 2. Install and Set Up Surge (One-Time for Publishing)
+
+Surge lets you put your site online for free.
+
+- In your **Terminal**, run:
+  ```bash
+  npm install -g surge
+  ```
+- Then log in to Surge (only needed once):
+  ```bash
+  surge login
+  ```
+  Enter your email and password when prompted.
+
+- If you don't have a Surge account, sign up at [surge.sh](https://surge.sh).
+
+---
+
 ## 📋 What You Can Say
 
 ### Creating Sites
