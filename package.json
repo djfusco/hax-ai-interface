@@ -1,6 +1,6 @@
 {
   "name": "hax-ai-interface",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Create and manage beautiful websites using AI conversation - powered by HAX",
   "main": "lib/server.js",
   "bin": {
