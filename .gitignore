@@ -2,3 +2,4 @@ node_modules
 
 # VS Code workspace files
 lib/hax-ai-vs-code.code-workspace
+hax-ai-interface.code-workspace
