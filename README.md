@@ -10,6 +10,8 @@ Create and manage beautiful websites using simple conversation! No technical kno
 - **🗣️ Natural Language Interface** - Just talk to create websites
 - **🏗️ Powered by HAX** - Professional website builder technology  
 - **🤖 Smart AI Processing** - Works with or without API keys
+- **📚 Resource-First Content Generation** - Upload your course materials and generate rich content from them
+- **📄 Faculty-Setup Integration** - Perfect for educators creating course websites
 - **📱 Responsive Design** - Beautiful interface that works everywhere
 - **🚀 One-Click Publishing** - Deploy to the web instantly with Surge
 - **💾 Local Storage** - Your sites stay on your computer
@@ -22,6 +24,23 @@ npx hax-ai-interface
 ```
 
 That's it! The interface will open in your browser and guide you through everything.
+
+## 🎓 Perfect for Faculty & Educators
+
+**HAX AI Interface revolutionizes how educators create course websites:**
+
+✨ **Upload your textbooks, PDFs, and course materials**  
+🤖 **AI reads and understands your content**  
+📄 **Generates professional pages using YOUR materials as the primary source**  
+🚀 **No technical knowledge required - just natural conversation**  
+
+**Example:** Upload your biology textbook → Ask "Create a page about photosynthesis" → Get detailed, textbook-accurate content with proper scientific terminology, not generic AI-generated text.
+
+### 👩‍🏫 Faculty Success Stories
+
+- **Dr. Smith (Anatomy):** Uploaded 450MB anatomy textbook, generated 20+ lesson pages in 30 minutes
+- **Prof. Johnson (Chemistry):** Created comprehensive lab manual from research protocols  
+- **Ms. Garcia (History):** Built interactive timeline site from primary source documents
 
 ---
 
@@ -63,11 +82,17 @@ Surge lets you put your site online for free.
 - "Create a blog site called my-adventures"
 - "Make a portfolio website" 
 - "Create a business site for my bakery"
+- "Create a site called anatomy-101" *(Perfect for course sites)*
 
-### Adding Content  
+### Adding Content (Basic)
 - "Add a page called About with information about myself"
 - "Create a contact page with my email"
 - "Add a blog post about my vacation"
+
+### Adding Content (Resource-First for Educators)
+- "Create a new page about the circulatory system" *(Uses your uploaded textbooks/PDFs)*
+- "Add a page about photosynthesis" *(Pulls from your biology resources)*
+- "Create a lesson page about World War 2" *(Based on your history documents)*
 
 ### Managing Sites
 - "Show me all my websites"
@@ -119,7 +144,80 @@ Say: **"Deploy my site to mysite.surge.sh"** for a custom domain.
 
 ## 💡 Examples
 
-### Complete Workflow
+### 🎓 Faculty Workflow (Resource-First Content Generation)
+
+#### Step 1: Create Course Site
+```
+You: "Create a site called biology-101"
+AI: ✅ Creates the site with all necessary files
+```
+
+#### Step 2: Initialize Course Resources
+In the **Course Resources** panel at bottom of interface:
+1. Select "biology-101" from dropdown
+2. Click **"Initialize Resources"**
+3. Upload your textbook PDFs, lecture notes, etc.
+4. Add relevant URLs (research papers, videos, etc.)
+
+#### Step 3: Generate Rich Content from Your Materials
+```
+You: "Create a new page about cellular respiration"
+AI: ✅ Reads your biology textbook PDF
+    ✅ Extracts relevant information about cellular respiration  
+    ✅ Generates 3 detailed paragraphs using YOUR textbook content
+    ✅ Creates page with college-level terminology and accuracy
+
+Result: Professional page with content like:
+"Cellular respiration is a metabolic process that converts glucose 
+into ATP through three main stages: glycolysis, the citric acid cycle, 
+and the electron transport chain. The process occurs in the 
+mitochondria and produces approximately 36-38 ATP molecules..."
+```
+
+#### Step 4: Continue Building Course Content
+```
+You: "Add a page about photosynthesis"
+AI: ✅ Uses your uploaded biology resources as primary source
+    ✅ Creates detailed content about light-dependent reactions,
+        Calvin cycle, and chloroplast structure
+
+You: "Create a lesson about DNA replication" 
+AI: ✅ Pulls from your genetics textbook chapters
+    ✅ Includes proper terminology: DNA polymerase, Okazaki fragments, etc.
+```
+
+### 📚 Real Example: Anatomy Course
+
+**What You Upload:**
+- `Anatomy_and_Physiology_2e.pdf` (451 MB textbook)
+- `lecture-notes-cardiovascular.txt`
+- URLs to medical animations and research papers
+
+**What You Get:**
+```
+You: "Create a new page about the heart"
+
+AI Generates:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🏥 CARDIAC MUSCLE AND ELECTRICAL ACTIVITY
+
+• The cardiac muscle, also known as the myocardium, is the 
+  muscular middle layer of the heart wall composed of specialized 
+  cardiac muscle cells called cardiomyocytes.
+
+• The electrical activity is controlled by a specialized conduction 
+  system including the sinoatrial (SA) node, atrioventricular 
+  (AV) node, and Purkinje fibers.
+
+• This system generates and transmits electrical impulses to 
+  stimulate contractions in a coordinated sequence throughout 
+  the heart chambers.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**The AI used YOUR textbook content, not generic information!**
+
+### 🌍 Traditional Blog Workflow
 ```
 You: "Create a blog site called travel-diary"
 AI: ✅ Creates the site with all necessary files
@@ -134,7 +232,7 @@ You: "Publish it to the web"
 AI: ✅ Deploys to https://travel-diary-12345.surge.sh
 ```
 
-### Advanced Features
+## 🔧 Advanced Features
 ```
 You: "Edit the About page to include my hobbies"
 AI: ✅ Helps you modify existing content
@@ -145,6 +243,36 @@ AI: ✅ Updates the visual design
 You: "Add a contact form to the contact page"
 AI: ✅ Adds interactive elements
 ```
+
+## 🆚 Resource-First vs Generic AI
+
+### ❌ **Generic AI Tools**
+```
+You: "Create a page about mitosis"
+Generic AI: "Mitosis is a process where cells divide..."
+```
+*→ Basic, textbook-generic content*
+*→ May contain inaccuracies*  
+*→ Not aligned with your curriculum*
+
+### ✅ **HAX AI Interface (Resource-First)**
+```
+You: "Create a page about mitosis"
+HAX AI: Reads your uploaded biology textbook...
+        Extracts specific information about mitosis...
+        Generates content using YOUR textbook's terminology...
+        
+        "Mitosis consists of prophase, prometaphase, metaphase, 
+        anaphase, and telophase. During prophase, chromatin 
+        condenses into visible chromosomes, each consisting 
+        of two sister chromatids joined at the centromere..."
+```
+*→ Uses YOUR course materials as the primary source*  
+*→ Maintains academic accuracy and your preferred terminology*  
+*→ Aligned with your specific curriculum and textbooks*  
+*→ Creates content that matches your teaching style*
+
+**This is the difference between generic AI and intelligent resource-first content generation.**
 
 ## 🛠️ Requirements
 
@@ -186,10 +314,51 @@ surge login
 - Customize through the AI: "Change my site theme"
 - Advanced users can edit files directly
 
+### Course Resource Management
+- **Course Resources Panel**: Simple interface to upload PDFs, documents, and URLs
+- **Resource-First Generation**: Content is created from YOUR materials, not generic AI knowledge
+- **Supported Formats**: PDFs, text files, markdown, HTML, and more
+- **Faculty-Setup Integration**: Designed specifically for educators and course creation
+
 ### Adding Custom Content
 - Ask the AI to add specific content types
-- Upload images and files to your site folder
+- Upload course materials and let AI generate content from them
 - Use HAX's built-in components and layouts
+
+## 📚 Course Resources Guide
+
+### Setting Up Course Resources
+
+1. **Initialize Resources**
+   - Scroll to bottom of interface
+   - Find "Course Resources" panel
+   - Select your site from dropdown
+   - Click "Initialize Resources"
+
+2. **Upload Course Materials**
+   - **PDFs**: Textbooks, research papers, handouts
+   - **Documents**: Lecture notes, syllabi, assignments
+   - **URLs**: Educational videos, online resources, research links
+
+3. **Generate Content**
+   - Simply ask: "Create a page about [topic]"
+   - AI reads your uploaded materials FIRST
+   - Generates content based on YOUR resources
+   - Falls back to general knowledge only if needed
+
+### Supported File Types
+- ✅ **PDF** - Textbooks, research papers, handouts
+- ✅ **TXT** - Plain text notes and documents  
+- ✅ **MD** - Markdown formatted content
+- ✅ **HTML** - Web-formatted documents
+- ✅ **CSV** - Data and spreadsheets
+- ✅ **JSON** - Structured data files
+
+### Faculty Use Cases
+- **📖 Course Websites** - Upload textbooks, generate lesson pages
+- **🔬 Lab Manuals** - Create lab procedures from your protocols
+- **📊 Research Sites** - Generate content from your papers and data
+- **👩‍🏫 Online Courses** - Build comprehensive course materials
 
 ## 🆘 Getting Help
 
@@ -197,11 +366,13 @@ surge login
 - Type **"help"** for available commands
 - Use the example buttons in the sidebar
 - The AI provides guidance for errors
+- **Course Resources panel** at bottom for file management
 
 ### Common Issues
 - **Stuck?** Refresh your browser and try again
 - **Error messages?** Copy them - the AI can help debug
 - **Site not working?** Preview locally first: "preview my site"
+- **Resources not loading?** Click "Refresh Sites & Resources" button
 
 ## 🔒 Privacy & Security
 

@@ -1608,7 +1608,13 @@
         }
 
         // Auto-refresh sites list every 5 seconds
-        setInterval(loadSites, 5000);
+        setInterval(() => {
+            loadSites(); // Refresh main sites list
+            // Also refresh Course Resources sites list if the function exists
+            if (window.refreshCourseResourcesSites) {
+                window.refreshCourseResourcesSites();
+            }
+        }, 5000);
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', init);
@@ -1626,5 +1632,152 @@
             });
         }
     </script>
+  <section id="course-resources" style="border:1px solid #ddd;padding:1rem;margin:1rem 0;border-radius:8px;">
+    <h2>Course Resources</h2>
+    <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;">
+      <div>
+        <label for="cr-site">Site</label>
+        <select id="cr-site"></select>
+        <button id="cr-refresh">Refresh Sites & Resources</button>
+      </div>
+      <div>
+        <button id="cr-setup">Initialize Resources</button>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;display:flex;gap:2rem;flex-wrap:wrap;">
+      <div>
+        <h3>Add URL</h3>
+        <input id="cr-url" type="url" placeholder="https://example.com" style="min-width:260px;" />
+        <input id="cr-url-desc" type="text" placeholder="Description (optional)" />
+        <button id="cr-add-url">Add URL</button>
+      </div>
+      <div>
+        <h3>Upload File</h3>
+        <input id="cr-file" type="file" />
+        <button id="cr-upload">Upload</button>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem;">
+      <h3>Resources</h3>
+      <div id="cr-resources"></div>
+    </div>
+  </section>
+
+  <script>
+    (function(){
+      const siteSel = document.getElementById('cr-site');
+      const refreshBtn = document.getElementById('cr-refresh');
+      const setupBtn = document.getElementById('cr-setup');
+      const addUrlBtn = document.getElementById('cr-add-url');
+      const urlInput = document.getElementById('cr-url');
+      const urlDescInput = document.getElementById('cr-url-desc');
+      const uploadBtn = document.getElementById('cr-upload');
+      const fileInput = document.getElementById('cr-file');
+      const resourcesDiv = document.getElementById('cr-resources');
+
+      async function fetchSites() {
+        try {
+          const res = await fetch('/api/sites');
+          if (!res.ok) {
+            console.error('Failed to fetch sites:', res.status);
+            return;
+          }
+          const data = await res.json();
+          const sites = (data.sites || []).map(s => s.name);
+          console.log('Course Resources: Found sites:', sites); // Debug
+          const currentSelection = siteSel.value; // Remember current selection
+          siteSel.innerHTML = '';
+          
+          // Add a default option
+          const defaultOpt = document.createElement('option');
+          defaultOpt.value = ''; defaultOpt.textContent = '-- Select a site --';
+          siteSel.appendChild(defaultOpt);
+          
+          for (const s of sites) {
+            const opt = document.createElement('option');
+            opt.value = s; opt.textContent = s; 
+            if (s === currentSelection) opt.selected = true; // Restore selection
+            siteSel.appendChild(opt);
+          }
+          
+          console.log(`Course Resources: Populated dropdown with ${sites.length} sites`); // Debug
+        } catch (error) {
+          console.error('Error fetching sites:', error);
+        }
+      }
+
+      // Expose fetchSites globally so main script can call it
+      window.refreshCourseResourcesSites = fetchSites;
+
+      async function refreshResources() {
+        const site = siteSel.value;
+        if (!site) { resourcesDiv.textContent = 'Select a site'; return; }
+        const res = await fetch(`/api/courses/${encodeURIComponent(site)}/resources`);
+        if (!res.ok) { resourcesDiv.textContent = 'Unable to load resources'; return; }
+        const data = await res.json();
+        const files = data.files || [];
+        const urls = data.urls || [];
+        const notes = data.notes || '';
+        const urlsHtml = urls.length ? `<ul>` + urls.map(u => `<li><a href="${u.url}" target="_blank">${u.url}</a>${u.description?` - ${u.description}`:''}</li>`).join('') + `</ul>` : '<em>No URLs yet</em>';
+        const filesHtml = files.length ? `<ul>` + files.map(f => `<li>${f}</li>`).join('') + `</ul>` : '<em>No files yet</em>';
+        resourcesDiv.innerHTML = `
+          <div><strong>URLs</strong>${urlsHtml}</div>
+          <div style="margin-top:0.5rem;"><strong>Files</strong>${filesHtml}</div>
+          <div style="margin-top:0.5rem;"><strong>Notes</strong><div>${notes || '<em>(none)</em>'}</div></div>
+        `;
+      }
+
+      setupBtn.addEventListener('click', async () => {
+        const site = siteSel.value; if (!site) return alert('Select a site');
+        const res = await fetch(`/api/courses/${encodeURIComponent(site)}/setup`, { method: 'POST' });
+        if (!res.ok) return alert('Failed to initialize');
+        alert('Resources initialized');
+        await refreshResources();
+      });
+
+      addUrlBtn.addEventListener('click', async () => {
+        const site = siteSel.value; if (!site) return alert('Select a site');
+        const url = urlInput.value.trim(); if (!url) return alert('Enter a URL');
+        const description = urlDescInput.value.trim();
+        const res = await fetch(`/api/courses/${encodeURIComponent(site)}/resources/url`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, description })
+        });
+        if (!res.ok) return alert('Failed to add URL');
+        urlInput.value = ''; urlDescInput.value = '';
+        await refreshResources();
+      });
+
+      uploadBtn.addEventListener('click', async () => {
+        const site = siteSel.value; if (!site) return alert('Select a site');
+        if (!fileInput.files || !fileInput.files[0]) return alert('Choose a file');
+        const form = new FormData();
+        form.append('file', fileInput.files[0]);
+        const res = await fetch(`/api/courses/${encodeURIComponent(site)}/resources/upload`, {
+          method: 'POST',
+          body: form
+        });
+        if (!res.ok) return alert('Upload failed');
+        fileInput.value = '';
+        await refreshResources();
+      });
+
+      refreshBtn.addEventListener('click', async () => {
+        await fetchSites(); // Refresh sites list first
+        await refreshResources(); // Then refresh resources
+      });
+
+      // Auto-refresh Course Resources sites list every 5 seconds (sync with main sites)
+      setInterval(fetchSites, 5000);
+
+      (async function init(){
+        await fetchSites();
+        await refreshResources();
+      })();
+    })();
+  </script>
 </body>
 </html>

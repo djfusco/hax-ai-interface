@@ -61,19 +61,28 @@
   },
   "dependencies": {
     "@haxtheweb/create": "latest",
+    "multer": "^1.4.5-lts.1",
+    "pdf-parse": "^1.1.1",
+    "@langchain/anthropic": "^0.3.2",
+    "@langchain/community": "^0.3.0",
+    "@langchain/core": "^0.3.10",
+    "@langchain/langgraph": "^0.2.6",
+    "@langchain/openai": "^0.3.2",
+    "axios": "^1.7.2",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "inquirer": "^8.2.6",
+    "marked": "^5.0.0",
     "open": "^9.1.0",
     "ora": "^5.4.1",
     "surge": "^0.23.1",
     "ws": "^8.14.2"
   },
   "optionalDependencies": {
-    "@anthropic-ai/sdk": "^0.61.0",
-    "openai": "^4.20.1"
+    "@anthropic-ai/sdk": "^0.27.1",
+    "openai": "^4.57.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
