@@ -90,9 +90,10 @@ Surge lets you put your site online for free.
 - "Add a blog post about my vacation"
 
 ### Adding Content (Resource-First for Educators)
-- "Create a new page about the circulatory system" *(Uses your uploaded textbooks/PDFs)*
-- "Add a page about photosynthesis" *(Pulls from your biology resources)*
-- "Create a lesson page about World War 2" *(Based on your history documents)*
+- "Create a new page about the circulatory system **from my textbook**" *(Rich, detailed content)*
+- "Add a page about photosynthesis **using my biology resources**" *(Uses your PDFs)*
+- "Create a lesson about World War 2 **from my history documents**" *(Resource-based)*
+- "Generate content about bones **from my anatomy textbook**" *(Textbook-accurate)*
 
 ### Managing Sites
 - "Show me all my websites"
@@ -161,7 +162,9 @@ In the **Course Resources** panel at bottom of interface:
 
 #### Step 3: Generate Rich Content from Your Materials
 ```
-You: "Create a new page about cellular respiration"
+🎯 MAGIC PHRASE: "from my textbook"
+
+You: "Create a new page about cellular respiration FROM MY TEXTBOOK"
 AI: ✅ Reads your biology textbook PDF
     ✅ Extracts relevant information about cellular respiration  
     ✅ Generates 3 detailed paragraphs using YOUR textbook content
@@ -174,14 +177,16 @@ and the electron transport chain. The process occurs in the
 mitochondria and produces approximately 36-38 ATP molecules..."
 ```
 
+**💡 Pro Tip:** Always include phrases like "from my textbook", "using my resources", or "from my course materials" to get detailed, resource-based content!
+
 #### Step 4: Continue Building Course Content
 ```
-You: "Add a page about photosynthesis"
+You: "Add a page about photosynthesis FROM MY BIOLOGY RESOURCES"
 AI: ✅ Uses your uploaded biology resources as primary source
     ✅ Creates detailed content about light-dependent reactions,
         Calvin cycle, and chloroplast structure
 
-You: "Create a lesson about DNA replication" 
+You: "Create a lesson about DNA replication USING MY TEXTBOOK" 
 AI: ✅ Pulls from your genetics textbook chapters
     ✅ Includes proper terminology: DNA polymerase, Okazaki fragments, etc.
 ```
@@ -274,6 +279,52 @@ HAX AI: Reads your uploaded biology textbook...
 
 **This is the difference between generic AI and intelligent resource-first content generation.**
 
+## 🪄 Magic Phrases for Resource-First Content
+
+### 🎯 **Phrases That Trigger Rich, Textbook-Based Content:**
+
+**✨ The Magic Words:** `"from my textbook"`, `"using my resources"`, `"from my materials"`
+
+#### **Perfect Examples:**
+```
+✅ "Create a page about mitosis FROM MY TEXTBOOK"
+→ Gets detailed content with proper terminology from your biology book
+
+✅ "Add a lesson about the Revolutionary War USING MY HISTORY RESOURCES"
+→ Uses your uploaded documents and PDFs as primary source
+
+✅ "Generate content about organic chemistry FROM MY COURSE MATERIALS"
+→ Pulls from your chemistry textbooks and notes
+
+✅ "Create a page about heart anatomy FROM MY ANATOMY TEXTBOOK"
+→ Uses your 431MB textbook to generate detailed, accurate content
+```
+
+#### **⚡ Quick Phrases for Basic Content:**
+```
+⚡ "Create a page about mitosis"
+→ Gets generic, basic content (good for quick placeholders)
+
+⚡ "Add three pages for chapters 5, 6, and 7"
+→ Creates basic title pages without detailed content
+```
+
+### 🤔 **Troubleshooting Content Generation:**
+
+**Problem:** *"My pages only have titles, no detailed content!"*
+
+**Solution:** Add magic phrases to your requests:
+- ❌ **Don't say:** "Create a page about the skeletal system"
+- ✅ **Do say:** "Create a page about the skeletal system **FROM MY TEXTBOOK**"
+
+**Problem:** *"The content is too generic, not from my course materials!"*
+
+**Solution:** Be explicit about using your resources:
+- ✅ "...using my course materials"
+- ✅ "...from my uploaded documents" 
+- ✅ "...based on my textbook"
+- ✅ "...from my PDF resources"
+
 ## 🛠️ Requirements
 
 - **Node.js** 16+ (Download from [nodejs.org](https://nodejs.org))
@@ -340,11 +391,17 @@ surge login
    - **Documents**: Lecture notes, syllabi, assignments
    - **URLs**: Educational videos, online resources, research links
 
-3. **Generate Content**
-   - Simply ask: "Create a page about [topic]"
-   - AI reads your uploaded materials FIRST
-   - Generates content based on YOUR resources
-   - Falls back to general knowledge only if needed
+3. **Generate Content (Two Ways)**
+
+   **🎯 For Rich, Resource-Based Content:**
+   - "Create a page about [topic] **from my textbook**"
+   - "Add a lesson about [topic] **using my course materials**"
+   - "Generate content about [topic] **from my uploaded resources**"
+   - "Create a page about [topic] **based on my documents**"
+   
+   **⚡ For Quick, Basic Content:**
+   - "Create a page about [topic]" *(uses general knowledge)*
+   - "Add a page called [title]" *(basic placeholder content)*
 
 ### Supported File Types
 - ✅ **PDF** - Textbooks, research papers, handouts
@@ -373,6 +430,9 @@ surge login
 - **Error messages?** Copy them - the AI can help debug
 - **Site not working?** Preview locally first: "preview my site"
 - **Resources not loading?** Click "Refresh Sites & Resources" button
+- **Navigation not working?** Avoid colons (`:`) in page titles - use "Chapter 1 Introduction" not "Chapter 1: Introduction"
+- **No detailed content?** Use magic phrases: "Create a page about [topic] FROM MY TEXTBOOK"
+- **Content too generic?** Always mention your resources: "...using my course materials"
 
 ## 🔒 Privacy & Security
 
